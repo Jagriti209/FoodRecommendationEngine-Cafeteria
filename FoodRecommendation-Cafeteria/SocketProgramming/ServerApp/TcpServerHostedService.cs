@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿/*using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;
@@ -68,4 +68,4 @@ public class TcpServerHostedService : BackgroundService
         await stream.WriteAsync(responseBytes, 0, responseBytes.Length);
         Console.WriteLine("Acknowledgment sent");
     }
-}
+}*/

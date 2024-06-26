@@ -1,4 +1,4 @@
-﻿using MySqlConnector;
+﻿/*using MySqlConnector;
 
 public static class DatabaseService
 {
@@ -31,3 +31,4 @@ public static class DatabaseService
         }
     }
 }
+*/

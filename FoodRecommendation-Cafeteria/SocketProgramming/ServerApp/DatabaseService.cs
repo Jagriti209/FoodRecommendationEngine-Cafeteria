@@ -1,4 +1,4 @@
-﻿/*using MySqlConnector;
+/*using MySqlConnector;
 
 public static class DatabaseService
 {

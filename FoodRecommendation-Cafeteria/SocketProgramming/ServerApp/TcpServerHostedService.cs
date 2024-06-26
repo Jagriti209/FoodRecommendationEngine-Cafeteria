@@ -1,4 +1,4 @@
-﻿/*using Microsoft.Extensions.Hosting;
+/*using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json;
 using System.Net;
 using System.Net.Sockets;

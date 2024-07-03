@@ -1,18 +1,19 @@
-﻿using System;
+﻿using Newtonsoft.Json;
 using System.Net.Sockets;
 using System.Text;
-using Newtonsoft.Json;
 
 public static class ClientHandler
 {
-    private static string? roleType;
+    private static string? UserRole;
+
     public static void HandleClient(object obj)
     {
         TcpClient client = (TcpClient)obj;
         NetworkStream stream = client.GetStream();
         byte[] buffer = new byte[1024];
         int bytesRead;
-        
+
+        AuthenticationResult authResult = new AuthenticationResult();
 
         try
         {
@@ -20,21 +21,20 @@ public static class ClientHandler
             {
                 string jsonData = Encoding.ASCII.GetString(buffer, 0, bytesRead);
                 CustomData requestData = JsonConvert.DeserializeObject<CustomData>(jsonData);
-
                 if (requestData != null)
                 {
-                    
+
                     if (requestData.Choice == "authenticate")
                     {
-                        roleType = AuthenticationManager.AuthenticateUser(requestData.Name, requestData.Password);
+                        authResult = (AuthenticationResult)AuthenticationManager.AuthenticateUser(requestData.Name, requestData.Password);
+                        UserRole = authResult.UserRole;
                     }
 
-                    if (roleType != null)
+                    if (UserRole != null)
                     {
-                        requestData.RoleType = roleType;
-                        string responseDataJson = JsonConvert.SerializeObject(requestData);
+                        string responseDataJson = JsonConvert.SerializeObject(authResult);
                         byte[] responseDataBytes = Encoding.ASCII.GetBytes(responseDataJson);
-                        
+
                         if (requestData.Choice == "authenticate")
                         {
                             stream.Write(responseDataBytes, 0, responseDataBytes.Length);
@@ -42,9 +42,9 @@ public static class ClientHandler
 
                         if (requestData.Choice != "authenticate")
                         {
-                            RoleBasedAction(stream, roleType, requestData);
+                            RoleHandler.RoleBasedAction(stream, UserRole, requestData);
                         }
-              
+
                     }
                     else
                     {
@@ -74,25 +74,12 @@ public static class ClientHandler
             }
         }
     }
-
-    private static void RoleBasedAction(NetworkStream stream, string roleType, CustomData clientChoiceData)
+    public static void SendResponse(NetworkStream stream, CustomData customData)
     {
-        Console.WriteLine(roleType,"as");
-        switch (roleType.ToLower())
-        {
-            case "admin":
-                OperationsManager.ProcessAdminAction(stream, clientChoiceData);
-                break;
-/*            case "chef":
-                OperationsManager.ProcessChefAction(stream, clientChoiceData);
-                break;*/
-            case "employee":
-                OperationsManager.ProcessEmployeeAction(stream, clientChoiceData);
-                break;
-            default:
-                Console.WriteLine("Invalid role type.");
-                break;
-        }
+        string responseDataJson = JsonConvert.SerializeObject(customData);
+        byte[] responseDataBytes = Encoding.ASCII.GetBytes(responseDataJson);
+        stream.Write(responseDataBytes, 0, responseDataBytes.Length);
+        stream.Flush();
     }
 }
 

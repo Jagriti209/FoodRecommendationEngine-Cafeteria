@@ -13,7 +13,6 @@ public class Client
         {
             string jsonData = JsonConvert.SerializeObject(data);
             SendRequestAndGetResponse(jsonData);
-            Console.WriteLine("Data sent to server");
         }
         catch (Exception ex)
         {
@@ -34,7 +33,7 @@ public class Client
                 byte[] dataBytes = Encoding.ASCII.GetBytes(requestData);
                 stream.Write(dataBytes, 0, dataBytes.Length);
 
-                        byte[] responseBuffer = new byte[1024];
+                byte[] responseBuffer = new byte[5120];
                 int bytesRead = stream.Read(responseBuffer, 0, responseBuffer.Length);
                 string response = Encoding.ASCII.GetString(responseBuffer, 0, bytesRead);
 

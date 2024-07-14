@@ -1,4 +1,5 @@
-﻿using System.Net.Sockets;
+﻿using MySqlConnector;
+using System.Net.Sockets;
 
 public class AdminOperations
 {
@@ -59,11 +60,11 @@ public class AdminOperations
         }
     }
 
-    public static void DeleteMenuItem(NetworkStream stream, string itemName)
+    public static void DeleteMenuItem(NetworkStream stream, int itemID)
     {
         try
         {
-            AdminMenuRepository.DeleteMenuItem(itemName);
+            var itemName = AdminMenuRepository.DeleteMenuItem(itemID);
             notificationManager.SaveNotifications(new Notification
             {
                 Message = $"{itemName} has been deleted from the menu",

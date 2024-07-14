@@ -13,7 +13,7 @@
             ShowMenuOptions();
             string choice = GetUserChoice();
 
-            if (choice == "5")
+            if (choice == "6")
             {
                 Console.WriteLine("Logging out...");
                 break;
@@ -30,7 +30,8 @@
         Console.WriteLine("2. Give Feedback & Rating");
         Console.WriteLine("3. View Feedback and Rating");
         Console.WriteLine("4. View Notifications");
-        Console.WriteLine("5. Logout");
+        Console.WriteLine("5. Update Profile");
+        Console.WriteLine("6. Logout");
     }
 
     private string GetUserChoice()
@@ -55,6 +56,12 @@
             case "4":
                 menuOperations.ViewNotifications();
                 break;
+            case "5":
+                menuOperations.updateProfile() ;
+                break;
+            case "6":
+                Console.WriteLine("Exiting...");
+                return;
             default:
                 Console.WriteLine("Invalid choice. Please try again.");
                 break;

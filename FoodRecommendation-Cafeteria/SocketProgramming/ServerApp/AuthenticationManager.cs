@@ -40,7 +40,8 @@ public static class AuthenticationManager
                             authResult.UserId = reader.GetInt32("UserId");
                         }
                     }
-                    LogUserLogin(authResult.UserId);
+                   // LogUserLogin(authResult.UserId);
+
                     return authResult;
                 }
             }

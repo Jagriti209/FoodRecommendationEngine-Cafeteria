@@ -1,6 +1,10 @@
-﻿public class AdminMenu
+﻿using System.Globalization;
+
+public class AdminMenu
 {
     private AdminMenuOperations menuOperations;
+    AuthenticationService authenticationService = new AuthenticationService();
+    
     public AdminMenu(Client client)
     {
         menuOperations = new AdminMenuOperations(client);

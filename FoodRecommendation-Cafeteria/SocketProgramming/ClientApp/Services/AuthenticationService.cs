@@ -7,7 +7,7 @@ public class AuthenticationService
     private const string server = "127.0.0.1";
     private const int port = 8080;
 
-    public int UserId { get; private set; }
+    public static int UserId { get; private set; }
 
     public AuthenticationResult Authenticate(string name, string password)
     {
@@ -18,8 +18,11 @@ public class AuthenticationService
             {
                 CustomData authData = new CustomData
                 {
-                    Name = name,
-                    Password = password,
+                    UserData = new UserData
+                    {
+                        Name = name,
+                        Password = password,
+                    },
                     Choice = "authenticate"
                 };
 
@@ -33,8 +36,8 @@ public class AuthenticationService
                 string authResponse = Encoding.ASCII.GetString(authResponseBuffer, 0, authBytesRead);
 
                 AuthenticationResult responseData = JsonConvert.DeserializeObject<AuthenticationResult>(authResponse);
-
-                UserId = responseData.UserId;
+                UserId = responseData.UserID;
+                new UserData { UserID = responseData.UserID};
 
                 return new AuthenticationResult { Authenticated = true, UserRole = responseData.UserRole };
             }

@@ -56,7 +56,8 @@
                     MenuID = menuID,
                     MealType = mealType
 
-                }
+                },
+                UserData = new UserData { UserID = AuthenticationService.UserId }
             };
 
             client.SendDataToServer(menuData);
@@ -100,6 +101,52 @@
             Console.WriteLine($"| {item.MenuID,-20} | {item.MealType,-15} | {item.itemName,-20} |");
             Console.WriteLine("+----------------------+-----------------+----------------------+");
         }
+        GetUserChoice();
+    }
+
+    private void GetUserChoice()
+    {
+        Console.WriteLine("Do you want to delete any menu item or view detailed feedback?");
+        Console.WriteLine("1. Delete a menu item");
+        Console.WriteLine("2. View detailed feedback");
+        Console.WriteLine("3. Exit");
+        Console.Write("Enter your choice: ");
+
+        if (int.TryParse(Console.ReadLine(), out int choice))
+        {
+            switch (choice)
+            {
+                case 1:
+                    DeleteDiscardedMenuItem();
+                    break;
+                case 2:
+                    Console.WriteLine("Exiting.");
+                    break;
+                default:
+                    Console.WriteLine("Invalid choice. Please try again.");
+                    GetUserChoice();
+                    break;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid input. Please enter a number.");
+            GetUserChoice();
+        }
+    }
+
+    private void DeleteDiscardedMenuItem()
+    {
+        Console.Write("Enter the MenuId of the item you want to delete: ");
+        int itemIDToDelete = Convert.ToInt32(Console.ReadLine());
+
+        CustomData data = new CustomData
+        {
+            Choice = "deleteMenuItem",
+            MenuItem = new MenuItem { MenuID = itemIDToDelete }
+        };
+
+        client.SendDataToServer(data);
     }
 }
 

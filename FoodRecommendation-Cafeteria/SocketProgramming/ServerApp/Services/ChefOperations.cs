@@ -7,7 +7,7 @@ public static class ChefOperations
     static RecommendationService recommendationService = new RecommendationService();
     public static void ViewRecommendation(NetworkStream stream)
     {
-        var responseData = recommendationService.GenerateRecommendation();
+        var responseData = recommendationService.GetRecommendedMenuItems();
         string responseDataJson = JsonConvert.SerializeObject(responseData);
         byte[] responseDataBytes = Encoding.UTF8.GetBytes(responseDataJson);
         stream.Write(responseDataBytes, 0, responseDataBytes.Length);

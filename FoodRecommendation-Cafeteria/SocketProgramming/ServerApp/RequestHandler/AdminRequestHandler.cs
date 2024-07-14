@@ -13,7 +13,7 @@ public class AdminRequestHandler
                 AdminOperations.UpdateMenuItem(stream, requestData.MenuItem);
                 break;
             case "deletemenuitem":
-                AdminOperations.DeleteMenuItem(stream, requestData.MenuItem.ItemName);
+                AdminOperations.DeleteMenuItem(stream, requestData.MenuItem.MenuID);
                 break;
             case "getmenuitems":
                 MenuManager.ViewMenu(stream);

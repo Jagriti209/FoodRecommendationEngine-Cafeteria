@@ -26,7 +26,7 @@ public static class ClientHandler
 
                     if (requestData.Choice == "authenticate")
                     {
-                        authResult = (AuthenticationResult)AuthenticationManager.AuthenticateUser(requestData.Name, requestData.Password);
+                        authResult = (AuthenticationResult)AuthenticationManager.AuthenticateUser(requestData.UserData.Name, requestData.UserData.Password);
                         UserRole = authResult.UserRole;
                     }
 

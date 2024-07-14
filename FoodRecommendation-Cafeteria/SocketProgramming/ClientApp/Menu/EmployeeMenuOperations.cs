@@ -46,7 +46,8 @@ public class EmployeeMenuOperations
         CustomData requestData = new CustomData
         {
             Choice = "giveFeedback",
-            Feedback = new FeedbackData { Feedback = feedback, Rating = rating, MenuID = menuID }
+            Feedback = new FeedbackData { Feedback = feedback, Rating = rating, MenuID = menuID },
+            UserData = new UserData { UserID = AuthenticationService.UserId }
         };
 
         client.SendDataToServer(requestData);
@@ -90,6 +91,56 @@ public class EmployeeMenuOperations
         {
             Console.WriteLine($"Exception: {ex.Message}");
         }
+    }
+    public void updateProfile()
+    {
+        Console.WriteLine("Food Preference:");
+        Console.WriteLine("1. Veg");
+        Console.WriteLine("2. Non-Veg");
+        Console.Write("Enter food Preference: ");
+        int foodPreferenceChoice;
+        string foodPreference;
+        while (!int.TryParse(Console.ReadLine(), out foodPreferenceChoice) || (foodPreferenceChoice != 1 && foodPreferenceChoice != 2))
+        {
+            Console.Write("Invalid input. Please enter 1 for Veg or 2 for Non-Veg: ");
+        }
+        foodPreference = foodPreferenceChoice == 1 ? "Veg" : "Non-Veg";
+
+        Console.WriteLine("Is it spicy? ");
+        Console.WriteLine("1. True");
+        Console.WriteLine("2. False");
+        bool isSpicy;
+        while (!bool.TryParse(Console.ReadLine(), out isSpicy))
+        {
+            Console.Write("Invalid input. Please enter true or false: ");
+        }
+
+        Console.WriteLine("Cuisine Preference:");
+        Console.WriteLine("1. North Indian");
+        Console.WriteLine("2. South Indian");
+        Console.WriteLine("3. Chinese");
+        Console.WriteLine("4. Other");
+        Console.Write("Enter your choice: ");
+        int cuisinePreferenceChoice;
+        string cuisinePreference;
+        while (!int.TryParse(Console.ReadLine(), out cuisinePreferenceChoice) || (cuisinePreferenceChoice < 1 || cuisinePreferenceChoice > 4))
+        {
+            Console.Write("Invalid input. Please enter 1, 2, 3, or 4: ");
+        }
+        cuisinePreference = cuisinePreferenceChoice switch
+        {
+            1 => "North Indian",
+            2 => "South Indian",
+            3 => "Chinese",
+            4 => "Other",
+            _ => throw new Exception("Invalid cuisine Preference")
+        };
+        CustomData data = new CustomData
+        {
+            Choice = "updateProfile",
+            UserData = new UserData { UserID = AuthenticationService.UserId, FoodPreference = foodPreference, SpiceTolerant = isSpicy, CuisinePreference = cuisinePreference }
+        };
+        client.SendDataToServer(data);
     }
 
 }

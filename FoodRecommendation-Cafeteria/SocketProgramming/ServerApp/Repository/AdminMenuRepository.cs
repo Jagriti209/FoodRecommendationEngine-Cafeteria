@@ -4,14 +4,14 @@ public static class AdminMenuRepository
 {
     private static string _connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
 
-    public static void AddMenuItem(MenuItem menuItem)
+    public static string AddMenuItem(MenuItem menuItem)
     {
         using (var connection = new MySqlConnection(_connectionString))
         {
             try
             {
                 connection.Open();
-                string query = "INSERT INTO Menu (itemName, price, availability,mealType, dateCreated, foodType, IsSpicy, cuisineType, IsSweet) VALUES (@name, @price, @available,@mealType , CURDATE(), @foodType, @IsSpicy, @cuisineType, @IsSweet)";
+                string query = "INSERT INTO Menu (itemName, price, availability, mealType, dateCreated, foodType, IsSpicy, cuisineType, IsSweet) VALUES (@name, @price, @available, @mealType , CURDATE(), @foodType, @IsSpicy, @cuisineType, @IsSweet)";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@name", menuItem.ItemName);
@@ -33,6 +33,7 @@ public static class AdminMenuRepository
                 throw;
             }
         }
+        return menuItem.ItemName;
     }
 
     public static void UpdateMenuItem(MenuItem menuItem)
@@ -42,12 +43,12 @@ public static class AdminMenuRepository
             try
             {
                 connection.Open();
-                string query = "UPDATE Menu SET price = @price, availability = @availability WHERE itemName = @itemName";
+                string query = "UPDATE Menu SET price = @price, availability = @availability WHERE MenuID = @MenuID";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@price", menuItem.Price);
                     command.Parameters.AddWithValue("@availability", menuItem.Availability);
-                    command.Parameters.AddWithValue("@itemName", menuItem.ItemName);
+                    command.Parameters.AddWithValue("@MenuID", menuItem.MenuID);
                     int rowsAffected = command.ExecuteNonQuery();
                     Console.WriteLine($"{rowsAffected} row(s) updated.");
                 }

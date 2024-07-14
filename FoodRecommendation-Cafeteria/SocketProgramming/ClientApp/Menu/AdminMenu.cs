@@ -1,10 +1,8 @@
-﻿using System.Globalization;
-
-public class AdminMenu
+﻿public class AdminMenu
 {
     private AdminMenuOperations menuOperations;
     AuthenticationService authenticationService = new AuthenticationService();
-    
+
     public AdminMenu(Client client)
     {
         menuOperations = new AdminMenuOperations(client);
@@ -12,17 +10,18 @@ public class AdminMenu
 
     public void DisplayMenu()
     {
-        Console.WriteLine("Admin actions:");
-        Console.WriteLine("1. Add Menu Item");
-        Console.WriteLine("2. Update Menu Item");
-        Console.WriteLine("3. Delete Menu Item");
-        Console.WriteLine("4. View Menu Items");
-        Console.WriteLine("5. View Feedback");
-        Console.WriteLine("6. View Discard Menu Items");
-        Console.WriteLine("7. Logout");
 
         while (true)
         {
+            Console.WriteLine("Admin actions:");
+            Console.WriteLine("1. Add Menu Item");
+            Console.WriteLine("2. Update Menu Item");
+            Console.WriteLine("3. Delete Menu Item");
+            Console.WriteLine("4. View Menu Items");
+            Console.WriteLine("5. View Feedback");
+            Console.WriteLine("6. View Discard Menu Items");
+            Console.WriteLine("7. Logout");
+
             Console.Write("Enter your choice: ");
             string choice = Console.ReadLine().Trim().ToLower();
 

@@ -5,19 +5,27 @@ public class EmployeeMenuOperations
     private Client client;
     private MenuService menuService;
     private FeedbackService feedbackService;
+    private RecommendationService recommendationService;
     public EmployeeMenuOperations(Client client)
     {
         this.client = client;
         this.menuService = new MenuService(client);
         this.feedbackService = new FeedbackService(client);
+        this.recommendationService = new RecommendationService(client);
     }
 
     public void ViewMenu()
     {
         Console.WriteLine("Requesting menu from server...");
-        foreach (var item in menuService.GetMenuItems().Items)
+        var menuItems = menuService.GetMenuItems();
+        Console.WriteLine("+----------+----------------------+-----------------+");
+        Console.WriteLine("| Menu ID  | Name                 | Price           |");
+        Console.WriteLine("+----------+----------------------+-----------------+");
+
+        foreach (var item in menuItems.Items)
         {
-            Console.WriteLine($"menuId:{item.MenuID}, name: {item.itemName}, price: {item.Price}");
+            Console.WriteLine($"| {item.MenuID,-8} | {item.itemName,-20} | {item.Price,-15} |");
+            Console.WriteLine("+----------+----------------------+-----------------+");
         }
     }
 
@@ -91,6 +99,11 @@ public class EmployeeMenuOperations
         {
             Console.WriteLine($"Exception: {ex.Message}");
         }
+    }
+
+    public void GiveRecommendationForMe()
+    {
+        recommendationService.GetRecommendation();
     }
     public void updateProfile()
     {

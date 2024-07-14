@@ -21,7 +21,7 @@ public static class ChefOperations
             ChefMenuRepository.CreateMenuForNextDay(menuData);
             CustomData message = new CustomData
             {
-                Message = $"{menuData.MenuID} added successfully to Menu"
+                Notification = { Message = $"{menuData.MenuID} added successfully to Menu" }
             };
             ClientHandler.SendResponse(stream, message);
         }
@@ -30,7 +30,7 @@ public static class ChefOperations
             Console.WriteLine($"Error creating menu for next day: {ex.Message}");
             CustomData message = new CustomData
             {
-             Message = $"Error creating menu for next day: {ex.Message}"
+                Notification = { Message = $"Error creating menu for next day: {ex.Message}" }
             };
             ClientHandler.SendResponse(stream, message);
         }

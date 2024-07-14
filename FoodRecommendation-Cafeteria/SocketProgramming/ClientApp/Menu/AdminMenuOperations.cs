@@ -1,4 +1,6 @@
-﻿public class AdminMenuOperations
+﻿using Newtonsoft.Json;
+
+public class AdminMenuOperations
 {
     private Client client;
     private MenuService menuService;
@@ -106,6 +108,7 @@
                 itemName = itemName,
                 Price = itemPrice,
                 Available = itemAvailability,
+                MealType = mealType,
                 FoodType = foodType,
                 IsSpicy = isSpicy,
                 CuisineType = cuisineType,
@@ -113,7 +116,9 @@
             }
         };
 
-        client.SendDataToServer(data);
+        var response = client.SendDataToServer(data);
+        Notification responseData = JsonConvert.DeserializeObject<Notification>(response);
+        Console.WriteLine($"{responseData.Message}");
     }
 
     public void UpdateMenuItem()
@@ -147,7 +152,7 @@
     public void DeleteMenuItem()
     {
         ViewMenuItems();
-        Console.WriteLine("Enter the name of the menu item to delete:");
+        Console.WriteLine("Enter the menuID of the menu item to delete:");
         int itemIDToDelete = Convert.ToInt32(Console.ReadLine());
 
         CustomData data = new CustomData
@@ -156,20 +161,22 @@
             MenuItem = new MenuItem { MenuID = itemIDToDelete }
         };
 
-        client.SendDataToServer(data);
+        var response = client.SendDataToServer(data);
+        Notification responseData = JsonConvert.DeserializeObject<Notification>(response);
+        Console.WriteLine($"{responseData.Message}");
     }
 
     public void ViewMenuItems()
     {
         var menuItems = menuService.GetMenuItems();
-        Console.WriteLine("+----------+----------------------+---------------+");
-        Console.WriteLine("| Menu ID  | Name                 | Price         |");
-        Console.WriteLine("+----------+----------------------+---------------+");
+        Console.WriteLine("+----------+----------------------+-----------------+");
+        Console.WriteLine("| Menu ID  | Name                 | Price           |");
+        Console.WriteLine("+----------+----------------------+-----------------+");
 
         foreach (var item in menuItems.Items)
         {
             Console.WriteLine($"| {item.MenuID,-8} | {item.itemName,-20} | {item.Price,-15} |");
-            Console.WriteLine("+----------+----------------------+---------------+");
+            Console.WriteLine("+----------+----------------------+-----------------+");
         }
     }
 
@@ -179,13 +186,13 @@
         Console.WriteLine("Enter menuID:");
         int menuID = int.Parse(Console.ReadLine());
         var feedbacks = feedbackService.GetFeedbackForMenu(menuID);
-        Console.WriteLine("+-------------------------------+----------------+");
-        Console.WriteLine("| Feedback                      | Rating         |");
-        Console.WriteLine("+-------------------------------+----------------+");
+        Console.WriteLine("+--------------------------------------+----------------+");
+        Console.WriteLine("| Feedback                      | Rating                |");
+        Console.WriteLine("+--------------------------------------+----------------+");
 
         foreach (var item in feedbacks)
         {
-            Console.WriteLine($"| {item.Feedback,-30} | {item.Rating,-14} |");
+            Console.WriteLine($"| {item.Feedback,-40} | {item.Rating,-14} |");
             Console.WriteLine("+-------------------------------+----------------+");
         }
 

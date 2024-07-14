@@ -7,8 +7,7 @@
     public UserData UserData { get; set; }
     public MenuItem MenuItem { get; set; }
     public FeedbackData Feedback { get; set; }
-
-
+    public Notification Notification { get; set; }
 }
 
 

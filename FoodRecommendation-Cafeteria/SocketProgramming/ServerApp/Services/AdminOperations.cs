@@ -1,5 +1,4 @@
-﻿using MySqlConnector;
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 
 public class AdminOperations
 {
@@ -8,16 +7,16 @@ public class AdminOperations
     {
         try
         {
-            AdminMenuRepository.AddMenuItem(menuItem);
+            string itemName = AdminMenuRepository.AddMenuItem(menuItem);
             notificationManager.SaveNotifications(new Notification
             {
-                Message = $"{menuItem.ItemName} has been added to menu",
+                Message = $"{itemName} has been added to menu",
                 Date = DateTime.Now,
                 NotificationType = "MenuItemAdded"
             });
             CustomData message = new CustomData
             {
-                Message = "{menuItem.ItemName } added successfully"
+                Notification = { Message = $"{itemName} added successfully" }
             };
             ClientHandler.SendResponse(stream, message);
         }
@@ -26,7 +25,7 @@ public class AdminOperations
             Console.WriteLine($"Error adding menu item: {ex.Message}");
             CustomData message = new CustomData
             {
-                Message = $"Error adding menu item: {ex.Message}"
+                Notification = { Message = $"Error adding menu item: {ex.Message}" }
             };
             ClientHandler.SendResponse(stream, message);
         }
@@ -39,13 +38,13 @@ public class AdminOperations
             AdminMenuRepository.UpdateMenuItem(menuItem);
             notificationManager.SaveNotifications(new Notification
             {
-                Message = $"{menuItem.ItemName} has been updated in the menu",
+                Message = "{itemName} has been updated in the menu",
                 Date = DateTime.Now,
                 NotificationType = "MenuItemUpdated"
             });
             CustomData message = new CustomData
             {
-                Message = $"{menuItem.ItemName} updated successfully"
+                Notification = { Message = "{itemName} updated successfully" }
             };
             ClientHandler.SendResponse(stream, message);
         }
@@ -54,7 +53,7 @@ public class AdminOperations
             Console.WriteLine($"Error updating menu item: {ex.Message}");
             CustomData message = new CustomData
             {
-                Message = $"Error updating menu item: {ex.Message}"
+                Notification = { Message = $"Error updating menu item: {ex.Message}" }
             };
             ClientHandler.SendResponse(stream, message);
         }
@@ -73,7 +72,7 @@ public class AdminOperations
             });
             CustomData message = new CustomData
             {
-                Message = $"{itemName} deleted successfully"
+                Notification = { Message = $"{itemName} deleted successfully" }
             };
             ClientHandler.SendResponse(stream, message);
         }
@@ -82,7 +81,7 @@ public class AdminOperations
             Console.WriteLine($"Error deleting menu item: {ex.Message}");
             CustomData message = new CustomData
             {
-                Message = $"Error deleting menu item: {ex.Message}"
+                Notification = { Message = $"Error deleting menu item: {ex.Message}" }
             };
             ClientHandler.SendResponse(stream, message);
         }

@@ -13,7 +13,7 @@
             ShowMenuOptions();
             string choice = GetUserChoice();
 
-            if (choice == "6")
+            if (choice == "7")
             {
                 Console.WriteLine("Logging out...");
                 break;
@@ -30,8 +30,9 @@
         Console.WriteLine("2. Give Feedback & Rating");
         Console.WriteLine("3. View Feedback and Rating");
         Console.WriteLine("4. View Notifications");
-        Console.WriteLine("5. Update Profile");
-        Console.WriteLine("6. Logout");
+        Console.WriteLine("5. Get Recommendation For me");
+        Console.WriteLine("6. Update Profile");
+        Console.WriteLine("7. Logout");
     }
 
     private string GetUserChoice()
@@ -57,9 +58,12 @@
                 menuOperations.ViewNotifications();
                 break;
             case "5":
-                menuOperations.updateProfile() ;
+                menuOperations.GiveRecommendationForMe();
                 break;
             case "6":
+                menuOperations.updateProfile() ;
+                break;
+            case "7":
                 Console.WriteLine("Exiting...");
                 return;
             default:

@@ -7,17 +7,19 @@ public class Client
     public const string Server = "127.0.0.1";
     public const int Port = 8080;
 
-    public void SendDataToServer(CustomData data)
+    public string SendDataToServer(CustomData data)
     {
+        string response = null;
         try
         {
             string jsonData = JsonConvert.SerializeObject(data);
-            SendRequestAndGetResponse(jsonData);
+            response = SendRequestAndGetResponse(jsonData);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Exception: {ex.Message}");
         }
+        return response;        
     }
 
     public string SendRequestAndGetResponse(string requestData)
@@ -33,7 +35,7 @@ public class Client
                 byte[] dataBytes = Encoding.ASCII.GetBytes(requestData);
                 stream.Write(dataBytes, 0, dataBytes.Length);
 
-                byte[] responseBuffer = new byte[5120];
+                byte[] responseBuffer = new byte[10240];
                 int bytesRead = stream.Read(responseBuffer, 0, responseBuffer.Length);
                 string response = Encoding.ASCII.GetString(responseBuffer, 0, bytesRead);
 

@@ -1,13 +1,11 @@
 ﻿using MySqlConnector;
-using System;
-using System.IO;
 using System.Net.Sockets;
 
 public static class EmployeeMenuRepository
 {
     private static string connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
 
-    public static void AddFeedback(NetworkStream stream,FeedbackData feedback)
+    public static void AddFeedback(NetworkStream stream, FeedbackData feedback)
     {
         using (var connection = new MySqlConnection(connectionString))
         {
@@ -26,13 +24,13 @@ public static class EmployeeMenuRepository
 
                     command.ExecuteNonQuery();
                 }
-                
+
                 CustomData message = new CustomData
                 {
-                    Message = $"feedback updated successfully"
+                    Notification = { Message = $"feedback updated successfully"}
                 };
                 Console.WriteLine("wrote");
-                ClientHandler.SendResponse(stream,message);
+                ClientHandler.SendResponse(stream, message);
             }
             catch (Exception ex)
             {

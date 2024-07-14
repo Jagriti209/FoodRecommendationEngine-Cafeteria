@@ -15,9 +15,14 @@
     public void ViewMenu()
     {
         var menuItems = menuService.GetMenuItems();
+        Console.WriteLine("+----------+----------------------+-----------------+");
+        Console.WriteLine("| Menu ID  | Name                 | Price           |");
+        Console.WriteLine("+----------+----------------------+-----------------+");
+
         foreach (var item in menuItems.Items)
         {
-            Console.WriteLine($"menuId:{item.MenuID}, name: {item.itemName}, price: {item.Price}");
+            Console.WriteLine($"| {item.MenuID,-8} | {item.itemName,-20} | {item.Price,-15} |");
+            Console.WriteLine("+----------+----------------------+-----------------+");
         }
     }
 
@@ -29,18 +34,11 @@
 
     public void CreateMenuForNextDay()
     {
-        var menuItems = menuService.GetMenuItems();
-        foreach (var item in menuItems.Items)
-        {
-            Console.WriteLine($"menuId:{item.MenuID}, MealType:{item.MealType}, name: {item.itemName}, price: {item.Price}");
-        }
+        ViewMenu();
         bool continueInput = true;
 
         while (continueInput)
         {
-            Console.WriteLine("Enter meal type (breakfast, lunch, dinner):");
-            string mealType = Console.ReadLine();
-
             Console.WriteLine("Enter menu ID:");
             int menuID;
             while (!int.TryParse(Console.ReadLine(), out menuID))
@@ -53,9 +51,7 @@
                 Choice = "createMenu",
                 MenuItem = new MenuItem
                 {
-                    MenuID = menuID,
-                    MealType = mealType
-
+                    MenuID = menuID
                 },
                 UserData = new UserData { UserID = AuthenticationService.UserId }
             };
@@ -108,7 +104,7 @@
     {
         Console.WriteLine("Do you want to delete any menu item or view detailed feedback?");
         Console.WriteLine("1. Delete a menu item");
-        Console.WriteLine("2. View detailed feedback");
+        Console.WriteLine("2. Get detailed feedback");
         Console.WriteLine("3. Exit");
         Console.Write("Enter your choice: ");
 
@@ -120,6 +116,9 @@
                     DeleteDiscardedMenuItem();
                     break;
                 case 2:
+                    GetDetailedFeedback();
+                    break;
+                case 3:
                     Console.WriteLine("Exiting.");
                     break;
                 default:
@@ -139,13 +138,25 @@
     {
         Console.Write("Enter the MenuId of the item you want to delete: ");
         int itemIDToDelete = Convert.ToInt32(Console.ReadLine());
-
         CustomData data = new CustomData
         {
             Choice = "deleteMenuItem",
             MenuItem = new MenuItem { MenuID = itemIDToDelete }
         };
 
+        client.SendDataToServer(data);
+    }
+
+    public void GetDetailedFeedback()
+    {
+        Console.WriteLine("Enter itemName on which detailed feedback needed");
+        string ItemName = Console.ReadLine();
+        CustomData data = new CustomData
+        {
+            Notification = { Message = $"Chef has discarded {ItemName} from the menu. please provide a detailed feedback on it" },
+            MenuItem = {itemName = ItemName },
+            Choice = "addFeedbackToDiscardedMenuItem"
+        };
         client.SendDataToServer(data);
     }
 }

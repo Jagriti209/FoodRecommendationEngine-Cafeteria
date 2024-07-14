@@ -9,6 +9,7 @@ public static class MenuManager
 {
     private static readonly string connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
     static RecommendationService recommendationService = new RecommendationService();
+    
     public static void ViewMenu(NetworkStream stream)
     {
         var menuRepository = new MenuRepository(connectionString);

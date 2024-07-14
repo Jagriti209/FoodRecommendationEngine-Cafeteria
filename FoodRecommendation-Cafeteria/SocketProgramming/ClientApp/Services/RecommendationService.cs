@@ -23,14 +23,14 @@ public class RecommendationService
             List<MenuItem> recommendations = JsonConvert.DeserializeObject<List<MenuItem>>(response);
 
             Console.WriteLine("\nTop 5 Recommendations for Each Meal Type:");
-            Console.WriteLine("+----------------------+-----------------+----------------------+");
+            Console.WriteLine("+----------------------+-----------------+------------------------+");
             Console.WriteLine("| MenuId               | MealType        | itemName             |");
-            Console.WriteLine("+----------------------+-----------------+----------------------+");
+            Console.WriteLine("+----------------------+-----------------+------------------------+");
 
             foreach (var recommendation in recommendations)
             {
-                Console.WriteLine($"| {recommendation.MenuID,-20} | {recommendation.MealType,-20} | {recommendation.itemName,-20} |");
-                Console.WriteLine("+----------------------+----------------------+");
+                Console.WriteLine($"| {recommendation.MenuID,-20} | {recommendation.MealType,-15} | {recommendation.itemName,-22} |");
+                Console.WriteLine("+----------------------+-----------------+-------------------------");
             }
         }
         catch (Exception ex)

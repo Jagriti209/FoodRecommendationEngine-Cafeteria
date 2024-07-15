@@ -6,7 +6,7 @@
     public MenuManager(string userRole)
     {
         _userRole = userRole;
-        _client = new Client(); // Initialize Client here or consider injecting it
+        _client = new Client();
     }
 
     public void DisplayMenu()

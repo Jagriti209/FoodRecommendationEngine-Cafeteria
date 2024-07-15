@@ -4,13 +4,14 @@
     private MenuService menuService;
     private RecommendationService recommendationService;
     private FeedbackService feedbackService;
-
+    private EmployeeMenuOperations employeeMenuOperations;
     public ChefMenuOperations(Client client)
     {
         this.client = client;
         this.menuService = new MenuService(client);
         this.recommendationService = new RecommendationService(client);
         this.feedbackService = new FeedbackService(client);
+        this.employeeMenuOperations = new EmployeeMenuOperations(client);
     }
     public void ViewMenu()
     {
@@ -75,22 +76,22 @@
         Console.WriteLine("Enter menuID:");
         int menuID = int.Parse(Console.ReadLine());
         var feedbacks = feedbackService.GetFeedbackForMenu(menuID);
-        Console.WriteLine("+-------------------------------+----------------+");
-        Console.WriteLine("| Feedback                      | Rating         |");
-        Console.WriteLine("+-------------------------------+----------------+");
+        Console.WriteLine("+-----------------------------------------+----------------+");
+        Console.WriteLine("| Feedback                                | Rating         |");
+        Console.WriteLine("+-----------------------------------------+----------------+");
 
         foreach (var item in feedbacks)
         {
-            Console.WriteLine($"| {item.Feedback,-30} | {item.Rating,-14} |");
-            Console.WriteLine("+-------------------------------+----------------+");
+            Console.WriteLine($"| {item.Feedback,-40} | {item.Rating,-14} |");
+            Console.WriteLine("+-----------------------------------------+----------------+");
         }
     }
     public void ViewDiscardMenuItems()
     {
         var discardedItems = menuService.GetDiscardedItems();
-        Console.WriteLine("+----------------------+-----------------+----------------------+");
+        Console.WriteLine("+----------------------+-----------------+---------------------+");
         Console.WriteLine("| MenuId               | MealType        | itemName             |");
-        Console.WriteLine("+----------------------+-----------------+----------------------+");
+        Console.WriteLine("+----------------------+-----------------+---------------------+");
 
         foreach (var item in discardedItems)
         {
@@ -102,8 +103,8 @@
 
     private void GetUserChoice()
     {
-        Console.WriteLine("Do you want to delete any menu item or view detailed feedback?");
-        Console.WriteLine("1. Delete a menu item");
+        Console.WriteLine("Do you want to discard any menu item or view detailed feedback?");
+        Console.WriteLine("1. Discard a menu item");
         Console.WriteLine("2. Get detailed feedback");
         Console.WriteLine("3. Exit");
         Console.Write("Enter your choice: ");
@@ -113,7 +114,7 @@
             switch (choice)
             {
                 case 1:
-                    DeleteDiscardedMenuItem();
+                    DiscardMenuItem();
                     break;
                 case 2:
                     GetDetailedFeedback();
@@ -134,17 +135,19 @@
         }
     }
 
-    private void DeleteDiscardedMenuItem()
+    private void DiscardMenuItem()
     {
-        Console.Write("Enter the MenuId of the item you want to delete: ");
-        int itemIDToDelete = Convert.ToInt32(Console.ReadLine());
+        Console.Write("Enter the MenuId of the item you want to discard: ");
+        int itemIdToDiscard = Convert.ToInt32(Console.ReadLine());
         CustomData data = new CustomData
         {
-            Choice = "deleteMenuItem",
-            MenuItem = new MenuItem { MenuID = itemIDToDelete }
+            Choice = "discardMenuItem",
+            MenuItem = new MenuItem { MenuID = itemIdToDiscard }
         };
 
-        client.SendDataToServer(data);
+        string response = client.SendDataToServer(data);
+        Console.WriteLine(response);
+
     }
 
     public void GetDetailedFeedback()
@@ -158,6 +161,20 @@
             Choice = "addFeedbackToDiscardedMenuItem"
         };
         client.SendDataToServer(data);
+    }
+
+    public void ViewRolledOutMenu()
+    {
+        var menuItems = employeeMenuOperations.GetRolledOutMenuItems();
+        Console.WriteLine("+----------+----------------------+----------------------+-----------------+-----------------+");
+        Console.WriteLine("| Menu ID  | Name                 | MealType             | Price           | Votes           |");
+        Console.WriteLine("+----------+----------------------+----------------------+-----------------+-----------------+");
+
+        foreach (var item in menuItems)
+        {
+            Console.WriteLine($"| {item.MenuID,-8} | {item.ItemName,-20} | {item.MealType,-20} | {item.Price,-15} | {item.votes,-15} |");
+            Console.WriteLine("+----------+----------------------+---------------------+------------------+-----------------+");
+        }
     }
 }
 

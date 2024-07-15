@@ -1,29 +1,20 @@
 ﻿public class AdminMenu
 {
-    private AdminMenuOperations menuOperations;
-    AuthenticationService authenticationService = new AuthenticationService();
-
+    private readonly AdminMenuOperations menuOperations;
+    private readonly Logout logout;
     public AdminMenu(Client client)
     {
         menuOperations = new AdminMenuOperations(client);
+        logout = new Logout(client);
     }
 
     public void DisplayMenu()
     {
-
         while (true)
         {
-            Console.WriteLine("Admin actions:");
-            Console.WriteLine("1. Add Menu Item");
-            Console.WriteLine("2. Update Menu Item");
-            Console.WriteLine("3. Delete Menu Item");
-            Console.WriteLine("4. View Menu Items");
-            Console.WriteLine("5. View Feedback");
-            Console.WriteLine("6. View Discard Menu Items");
-            Console.WriteLine("7. Logout");
+            DisplayOptions();
 
-            Console.Write("Enter your choice: ");
-            string choice = Console.ReadLine().Trim().ToLower();
+            string choice = Console.ReadLine()?.Trim().ToLower();
 
             switch (choice)
             {
@@ -50,12 +41,25 @@
                     menuOperations.ViewDiscardMenuItems();
                     break;
                 case "7":
-                    Console.WriteLine("Exiting...");
+                    logout.LogoutUser();
                     return;
                 default:
                     Console.WriteLine("Invalid choice. Please try again.");
                     break;
             }
         }
+    }
+
+    private void DisplayOptions()
+    {
+        Console.WriteLine("Admin actions:");
+        Console.WriteLine("1. Add Menu Item");
+        Console.WriteLine("2. Update Menu Item");
+        Console.WriteLine("3. Delete Menu Item");
+        Console.WriteLine("4. View Menu Items");
+        Console.WriteLine("5. View Feedback");
+        Console.WriteLine("6. View Discard Menu Items");
+        Console.WriteLine("7. Logout");
+        Console.Write("Enter your choice: ");
     }
 }

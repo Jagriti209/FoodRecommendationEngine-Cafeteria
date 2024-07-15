@@ -15,7 +15,8 @@ public class RecommendationService
         {
             CustomData requestData = new CustomData
             {
-                Choice = "viewRecommendation"
+                Choice = "viewRecommendation",
+                UserData = new UserData { UserID = AuthenticationService.UserId },
             };
             string jsonData = JsonConvert.SerializeObject(requestData);
             string response = _client.SendRequestAndGetResponse(jsonData);

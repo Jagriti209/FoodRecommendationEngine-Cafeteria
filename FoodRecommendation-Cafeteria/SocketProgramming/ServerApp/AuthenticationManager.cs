@@ -2,22 +2,7 @@
 
 public static class AuthenticationManager
 {
-    private static string connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
-    public static void LogUserLogout()
-    {
-        using (var connection = new MySqlConnection(connectionString))
-        {
-            connection.Open();
-            string query = "INSERT INTO UserSessionLog (UserId, LogoutTime) VALUES (@userId, @LogoutTime)";
-            using (var command = new MySqlCommand(query, connection))
-            {
-                //command.Parameters.AddWithValue("@userId", userId);
-                command.Parameters.AddWithValue("@LogoutTime", DateTime.Now);
-                command.ExecuteNonQuery();
-            }
-        }
-    }
-
+    private static string connectionString = Configuration.ConnectionString;
     public static object AuthenticateUser(string username, string password)
     {
         AuthenticationResult authResult = new AuthenticationResult();
@@ -40,7 +25,7 @@ public static class AuthenticationManager
                             authResult.UserId = reader.GetInt32("UserId");
                         }
                     }
-                   // LogUserLogin(authResult.UserId);
+                    LogUserLogin(authResult.UserId);
 
                     return authResult;
                 }

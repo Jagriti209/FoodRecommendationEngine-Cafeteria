@@ -5,11 +5,12 @@ using System.Text;
 public static class ClientHandler
 {
     private static string? UserRole;
+    static NetworkStream stream;
 
     public static void HandleClient(object obj)
     {
         TcpClient client = (TcpClient)obj;
-        NetworkStream stream = client.GetStream();
+        stream = client.GetStream();
         byte[] buffer = new byte[1024];
         int bytesRead;
 
@@ -74,10 +75,9 @@ public static class ClientHandler
             }
         }
     }
-    public static void SendResponse(NetworkStream stream, CustomData customData)
+    public static void SendResponse(string response)
     {
-        string responseDataJson = JsonConvert.SerializeObject(customData);
-        byte[] responseDataBytes = Encoding.ASCII.GetBytes(responseDataJson);
+        byte[] responseDataBytes = Encoding.ASCII.GetBytes(response);
         stream.Write(responseDataBytes, 0, responseDataBytes.Length);
         stream.Flush();
     }

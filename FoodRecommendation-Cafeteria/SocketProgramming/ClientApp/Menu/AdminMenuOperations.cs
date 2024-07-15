@@ -107,7 +107,7 @@ public class AdminMenuOperations
             {
                 itemName = itemName,
                 Price = itemPrice,
-                Available = itemAvailability,
+                Availability = itemAvailability,
                 MealType = mealType,
                 FoodType = foodType,
                 IsSpicy = isSpicy,
@@ -117,8 +117,8 @@ public class AdminMenuOperations
         };
 
         var response = client.SendDataToServer(data);
-        Notification responseData = JsonConvert.DeserializeObject<Notification>(response);
-        Console.WriteLine($"{responseData.Message}");
+        CustomData responseData = JsonConvert.DeserializeObject<CustomData>(response);
+        Console.WriteLine($"{responseData.Notification.Message}");
     }
 
     public void UpdateMenuItem()
@@ -143,10 +143,12 @@ public class AdminMenuOperations
         CustomData data = new CustomData
         {
             Choice = "updateMenuItem",
-            MenuItem = new MenuItem { itemName = itemNameToUpdate, Price = newItemPrice, Available = newItemAvailability }
+            MenuItem = new MenuItem { itemName = itemNameToUpdate, Price = newItemPrice, Availability = newItemAvailability }
         };
 
-        client.SendDataToServer(data);
+        var response = client.SendDataToServer(data);
+        CustomData responseData = JsonConvert.DeserializeObject<CustomData>(response);
+        Console.WriteLine($"{responseData.Notification.Message}");
     }
 
     public void DeleteMenuItem()
@@ -162,8 +164,8 @@ public class AdminMenuOperations
         };
 
         var response = client.SendDataToServer(data);
-        Notification responseData = JsonConvert.DeserializeObject<Notification>(response);
-        Console.WriteLine($"{responseData.Message}");
+        CustomData responseData = JsonConvert.DeserializeObject<CustomData>(response);
+        Console.WriteLine($"{responseData.Notification.Message}");
     }
 
     public void ViewMenuItems()

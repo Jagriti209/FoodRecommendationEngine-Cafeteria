@@ -19,13 +19,13 @@ public class AdminRequestHandler
                 MenuManager.ViewMenu(stream);
                 break;
             case "viewfeedback":
-                FeedbackManager.ViewFeedback(stream, requestData.Feedback.MenuID);
+                FeedbackManager.ViewFeedback(requestData.Feedback.MenuID);
                 break;
             case "getdiscardedmenuitems":
-                MenuManager.ViewDiscardedMenuItems(stream);
+                MenuManager.ViewMenuItemsToDiscarded(stream);
                 break;
             case "logout":
-                AuthenticationManager.LogUserLogout();
+                Logout.LogUserLogout(requestData.UserData.UserID);
                 break;
             default:
                 Console.WriteLine("Invalid choice.");

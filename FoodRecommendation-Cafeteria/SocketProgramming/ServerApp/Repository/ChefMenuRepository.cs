@@ -1,5 +1,4 @@
 ﻿using MySqlConnector;
-using System;
 
 public static class ChefMenuRepository
 {
@@ -39,5 +38,51 @@ public static class ChefMenuRepository
                 throw;
             }
         }
+    }
+
+    public static string AddItemToDiscardedMenu(int menuId)
+    {
+        string itemName = null;
+        using (var connection = new MySqlConnection(_connectionString))
+        {
+            try
+            {
+                connection.Open();
+                string fetchQuery = "SELECT itemName FROM Menu WHERE menuId = @menuId";
+                using (var fetchCommand = new MySqlCommand(fetchQuery, connection))
+                {
+                    fetchCommand.Parameters.AddWithValue("@menuId", menuId);
+                    object result = fetchCommand.ExecuteScalar();
+                    if (result != null)
+                    {
+                        itemName = result.ToString();
+                    }
+                }
+
+                string updateQuery = "UPDATE Menu SET availability = @availability WHERE MenuID = @MenuID";
+                using (var command = new MySqlCommand(updateQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@availability", 0);
+                    command.Parameters.AddWithValue("@MenuID", menuId);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    Console.WriteLine($"{rowsAffected} row(s) updated.");
+                }
+
+                string insertQuery = "INSERT INTO DiscardedMenuItem (menuID, discardedDate) VALUES ( @menuID, CURDATE())";
+                using (var command = new MySqlCommand(insertQuery, connection))
+                {
+                    command.Parameters.AddWithValue("@menuID", menuId);
+                    command.Parameters.AddWithValue("@discardedDate", DateTime.Now);
+                    int rowsAffected = command.ExecuteNonQuery();
+                    Console.WriteLine($"{rowsAffected} row(s) inserted.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error adding menu item: {ex.Message}");
+                throw;
+            }
+        }
+        return itemName;
     }
 }

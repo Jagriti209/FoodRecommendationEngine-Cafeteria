@@ -26,8 +26,6 @@ public class FeedbackService
 
             string jsonData = JsonConvert.SerializeObject(requestData);
             string response = _client.SendRequestAndGetResponse(jsonData);
-            Console.WriteLine("Request for feedback data sent to server");
-
             FeedbackData[] feedback = JsonConvert.DeserializeObject<FeedbackData[]>(response);
             return feedback;
         }

@@ -8,16 +8,16 @@ public class RecommendationServiceForUser
 {
     private readonly FeedbackDataService _feedbackDataService;
     private readonly SentimentAnalysisService _sentimentAnalysisService;
-
+    private readonly string connectionString = Configuration.ConnectionString;
     public RecommendationServiceForUser()
     {
         _feedbackDataService = new FeedbackDataService();
         _sentimentAnalysisService = new SentimentAnalysisService();
     }
-    public void GenerateRecommendationForMe(NetworkStream stream)
+    public void GenerateRecommendationForMe(NetworkStream stream, int userId)
     {
         List<MenuItemScore> recommendedMenu = new List<MenuItemScore>();
-        var userDetails = GetUserPreferences(3);
+        var userDetails = GetUserPreferences(userId);
         List<string> mealTypes = new List<string> { "breakfast", "lunch", "dinner" };
         foreach (string mealType in mealTypes)
         {
@@ -40,15 +40,11 @@ public class RecommendationServiceForUser
             }
         }
         string responseDataJson = JsonConvert.SerializeObject(recommendedMenu);
-        byte[] responseDataBytes = Encoding.ASCII.GetBytes(responseDataJson);
-        stream.Write(responseDataBytes, 0, responseDataBytes.Length);
-        stream.Flush();
-        // return recommendedMenu;
+        ClientHandler.SendResponse(responseDataJson);
     }
     public UserData GetUserPreferences(int userId)
     {
         UserData userData = new UserData();
-        string connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
         using (var connection = new MySqlConnection(connectionString))
         {
             try
@@ -90,17 +86,17 @@ public class RecommendationServiceForUser
     public List<MenuItem> GetMenuItemsByUserPreferences(string mealType, UserData userDetails)
     {
         List<MenuItem> menuItems = new List<MenuItem>();
-        string connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
         using (var connection = new MySqlConnection(connectionString))
         {
             connection.Open();
-            string query = "SELECT menuID, itemName FROM Menu WHERE MealType = @MealType and foodType = @foodType and IsSpicy = @IsSpicy and cuisineType = @cuisineType ";
+            string query = "SELECT menuID, itemName FROM Menu WHERE MealType = @MealType and foodType = @foodType and IsSpicy = @IsSpicy and cuisineType = @cuisineType and availability = @availability ";
             using (var command = new MySqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@MealType", mealType);
                 command.Parameters.AddWithValue("@foodType", userDetails.FoodPreference);
                 command.Parameters.AddWithValue("@IsSpicy", userDetails.SpiceTolerant);
                 command.Parameters.AddWithValue("@cuisineType", userDetails.CuisinePreference);
+                command.Parameters.AddWithValue("@availability", 1);
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())

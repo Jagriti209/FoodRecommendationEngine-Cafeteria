@@ -5,9 +5,9 @@ public class NotificationService
 {
     private readonly NotificationRepository notificationRepository;
 
-    public NotificationService(NotificationRepository notificationRepository)
+    public NotificationService()
     {
-        this.notificationRepository = notificationRepository;
+        this.notificationRepository = new NotificationRepository();
     }
 
     public void SaveNotification(Notification notification)

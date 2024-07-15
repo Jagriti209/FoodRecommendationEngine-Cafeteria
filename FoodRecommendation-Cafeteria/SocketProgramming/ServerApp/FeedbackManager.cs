@@ -5,33 +5,15 @@ using System.Collections.Generic;
 
 public static class FeedbackManager
 {
-    private static readonly string connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
+    private static readonly string connectionString = Configuration.ConnectionString;
 
-    public static void ViewFeedback(NetworkStream stream,int MenuId)
+    public static void ViewFeedback(int MenuId)
     {
         var feedbackRepository = new FeedbackRepository(connectionString);
         var feedbackService = new FeedbackService(feedbackRepository);
 
         var feedbackList = feedbackService.GetFeedback(MenuId);
-        SendResponse(stream, feedbackList);
-    }
-
-    private static void SendResponse(NetworkStream stream, List<FeedbackData> feedbackList)
-    {
-        try
-        {
-            string responseDataJson = JsonConvert.SerializeObject(feedbackList);
-            byte[] responseDataBytes = Encoding.UTF8.GetBytes(responseDataJson);
-            stream.Write(responseDataBytes, 0, responseDataBytes.Length);
-            stream.Flush();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error sending response: {ex.Message}");
-            string errorMsg = "Error sending feedback response.";
-            byte[] errorBytes = Encoding.UTF8.GetBytes(errorMsg);
-            stream.Write(errorBytes, 0, errorBytes.Length);
-            stream.Flush();
-        }
+        string responseDataJson = JsonConvert.SerializeObject(feedbackList);
+        ClientHandler.SendResponse(responseDataJson);
     }
 }

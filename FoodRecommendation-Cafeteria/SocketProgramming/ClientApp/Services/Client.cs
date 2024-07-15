@@ -7,13 +7,15 @@ public class Client
     public const string Server = "127.0.0.1";
     public const int Port = 8080;
 
+    DataSerializer DataSerializer = new DataSerializer();
     public string SendDataToServer(CustomData data)
     {
         string response = null;
         try
         {
-            string jsonData = JsonConvert.SerializeObject(data);
+            string jsonData = DataSerializer.Serialize(data);
             response = SendRequestAndGetResponse(jsonData);
+
         }
         catch (Exception ex)
         {

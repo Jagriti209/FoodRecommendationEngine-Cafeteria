@@ -1,14 +1,15 @@
-﻿using System.Net.Sockets;
+﻿using Newtonsoft.Json;
+using System.Net.Sockets;
 
 public class AdminOperations
 {
-    static NotificationManager notificationManager = new NotificationManager();
+    static NotificationHandler notificationHandler = new NotificationHandler();
     public static void AddMenuItem(NetworkStream stream, MenuItem menuItem)
     {
         try
         {
             string itemName = AdminMenuRepository.AddMenuItem(menuItem);
-            notificationManager.SaveNotifications(new Notification
+            notificationHandler.SaveNotifications(new Notification
             {
                 Message = $"{itemName} has been added to menu",
                 Date = DateTime.Now,
@@ -16,18 +17,20 @@ public class AdminOperations
             });
             CustomData message = new CustomData
             {
-                Notification = { Message = $"{itemName} added successfully" }
+                Notification = new Notification { Message = $"{itemName} added successfully" }
             };
-            ClientHandler.SendResponse(stream, message);
+            string responseDataJson = JsonConvert.SerializeObject(message);
+            ClientHandler.SendResponse(responseDataJson);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error adding menu item: {ex.Message}");
             CustomData message = new CustomData
             {
-                Notification = { Message = $"Error adding menu item: {ex.Message}" }
+                Notification = new Notification { Message = $"Error adding menu item: {ex.Message}" }
             };
-            ClientHandler.SendResponse(stream, message);
+            string responseDataJson = JsonConvert.SerializeObject(message);
+            ClientHandler.SendResponse(responseDataJson);
         }
     }
 
@@ -36,26 +39,28 @@ public class AdminOperations
         try
         {
             AdminMenuRepository.UpdateMenuItem(menuItem);
-            notificationManager.SaveNotifications(new Notification
+            notificationHandler.SaveNotifications(new Notification
             {
-                Message = "{itemName} has been updated in the menu",
+                Message = $"{menuItem.ItemName} has been updated in the menu",
                 Date = DateTime.Now,
                 NotificationType = "MenuItemUpdated"
             });
             CustomData message = new CustomData
             {
-                Notification = { Message = "{itemName} updated successfully" }
+                Notification = new Notification { Message = $"{menuItem.ItemName} updated successfully" }
             };
-            ClientHandler.SendResponse(stream, message);
+            string responseDataJson = JsonConvert.SerializeObject(message);
+            ClientHandler.SendResponse(responseDataJson);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error updating menu item: {ex.Message}");
             CustomData message = new CustomData
             {
-                Notification = { Message = $"Error updating menu item: {ex.Message}" }
+                Notification = new Notification { Message = $"Error updating menu item: {ex.Message}" }
             };
-            ClientHandler.SendResponse(stream, message);
+            string responseDataJson = JsonConvert.SerializeObject(message);
+            ClientHandler.SendResponse(responseDataJson);
         }
     }
 
@@ -64,7 +69,7 @@ public class AdminOperations
         try
         {
             var itemName = AdminMenuRepository.DeleteMenuItem(itemID);
-            notificationManager.SaveNotifications(new Notification
+            notificationHandler.SaveNotifications(new Notification
             {
                 Message = $"{itemName} has been deleted from the menu",
                 Date = DateTime.Now,
@@ -72,18 +77,20 @@ public class AdminOperations
             });
             CustomData message = new CustomData
             {
-                Notification = { Message = $"{itemName} deleted successfully" }
+                Notification = new Notification { Message = $"{itemName} deleted successfully" }
             };
-            ClientHandler.SendResponse(stream, message);
+            string responseDataJson = JsonConvert.SerializeObject(message);
+            ClientHandler.SendResponse(responseDataJson);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error deleting menu item: {ex.Message}");
             CustomData message = new CustomData
             {
-                Notification = { Message = $"Error deleting menu item: {ex.Message}" }
+                Notification = new Notification { Message = $"Error deleting menu item: {ex.Message}" }
             };
-            ClientHandler.SendResponse(stream, message);
+            string responseDataJson = JsonConvert.SerializeObject(message);
+            ClientHandler.SendResponse(responseDataJson);
         }
     }
 }

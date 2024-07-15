@@ -1,10 +1,11 @@
 ﻿public class ChefMenu
 {
     private ChefMenuOperations menuOperations;
-
+    private  Logout logout;
     public ChefMenu(Client client)
     {
         menuOperations = new ChefMenuOperations(client);
+        logout = new Logout(client);
     }
     public void DisplayMenu()
     {
@@ -13,9 +14,9 @@
             ShowMenuOptions();
             string choice = GetUserChoice();
 
-            if (choice == "6")
+            if (choice == "7")
             {
-                Console.WriteLine("Logging out...");
+                logout.LogoutUser();
                 break;
             }
 
@@ -29,9 +30,10 @@
         Console.WriteLine("1. View Menu");
         Console.WriteLine("2. View Recommendation");
         Console.WriteLine("3. Create Menu for Next Day");
-        Console.WriteLine("4. View Feedback");
-        Console.WriteLine("5. View Discard Menu Items");
-        Console.WriteLine("6. Logout");
+        Console.WriteLine("4. View Rolled out items votes");
+        Console.WriteLine("5. View Feedback");
+        Console.WriteLine("6. View Menu Items to be Discarded");
+        Console.WriteLine("7. Logout");
     }
 
     private string GetUserChoice()
@@ -54,9 +56,12 @@
                 menuOperations.CreateMenuForNextDay();
                 break;
             case "4":
-                menuOperations.ViewFeedback();
+                menuOperations.ViewRolledOutMenu();
                 break;
             case "5":
+                menuOperations.ViewFeedback();
+                break;
+            case "6":
                 menuOperations.ViewDiscardMenuItems();
                 break;
             default:

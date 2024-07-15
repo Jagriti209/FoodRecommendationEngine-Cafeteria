@@ -6,9 +6,9 @@ public class NotificationRepository
 {
     private readonly string connectionString;
 
-    public NotificationRepository(string connectionString)
+    public NotificationRepository()
     {
-        this.connectionString = connectionString;
+        this.connectionString = Configuration.ConnectionString;
     }
 
     public void SaveNotification(Notification notification)

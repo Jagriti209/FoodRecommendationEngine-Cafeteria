@@ -43,12 +43,12 @@ public static class AdminMenuRepository
             try
             {
                 connection.Open();
-                string query = "UPDATE Menu SET price = @price, availability = @availability WHERE MenuID = @MenuID";
+                string query = "UPDATE Menu SET price = @price, availability = @availability WHERE itemName = @itemName";
                 using (var command = new MySqlCommand(query, connection))
                 {
                     command.Parameters.AddWithValue("@price", menuItem.Price);
                     command.Parameters.AddWithValue("@availability", menuItem.Availability);
-                    command.Parameters.AddWithValue("@MenuID", menuItem.MenuID);
+                    command.Parameters.AddWithValue("@itemName", menuItem.ItemName);
                     int rowsAffected = command.ExecuteNonQuery();
                     Console.WriteLine($"{rowsAffected} row(s) updated.");
                 }

@@ -1,14 +1,12 @@
 ﻿using MySqlConnector;
-using System;
-using System.Collections.Generic;
 
 public class MenuRepository
 {
     private readonly string connectionString;
 
-    public MenuRepository(string connectionString)
+    public MenuRepository()
     {
-        this.connectionString = connectionString;
+        this.connectionString = Configuration.ConnectionString;
     }
 
     public List<MenuItem> FetchMenuItems()
@@ -20,7 +18,7 @@ public class MenuRepository
             using (var connection = new MySqlConnection(connectionString))
             {
                 connection.Open();
-                string query = "SELECT menuID, itemName, price, availability, mealType FROM Menu";
+                string query = "SELECT menuID, itemName, price, availability, mealType FROM Menu where availability = 1";
 
                 using (var command = new MySqlCommand(query, connection))
                 {

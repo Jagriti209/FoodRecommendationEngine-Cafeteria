@@ -1,7 +1,6 @@
 ﻿using System.Net.Sockets;
 public class ChefRequestHandler
 {
-    static NotificationManager notificationManager = new NotificationManager();
     public static void ProcessChefAction(NetworkStream stream, CustomData requestData)
     {
         switch (requestData.Choice.ToLower())
@@ -15,18 +14,20 @@ public class ChefRequestHandler
             case "createmenu":
                 ChefOperations.CreateMenuForNextDay(stream, requestData.MenuItem);
                 break;
+            case "getrolledoutmenuitems":
+                EmployeeMenuRepository.GetRolledOutMenuItems(stream);
+                break;
             case "viewfeedback":
-                FeedbackManager.ViewFeedback(stream, requestData.Feedback.MenuID);
+                FeedbackManager.ViewFeedback(requestData.Feedback.MenuID);
                 break;
             case "getdiscardedmenuitems":
-                MenuManager.ViewDiscardedMenuItems(stream);
+                MenuManager.ViewMenuItemsToDiscarded(stream);
                 break;
-            case "addfeedbacktodiscardedmenuitem":
-                notificationManager.SaveNotifications(requestData.Notification);
-                ChefOperations.AddItemToDiscardedMenu(stream, requestData.MenuItem.ItemName);
+            case "discardmenuitem":
+                ChefOperations.AddItemToDiscardedMenu(stream, requestData.MenuItem.MenuID);
                 break;
             case "logout":
-                AuthenticationManager.LogUserLogout();
+                Logout.LogUserLogout(requestData.UserData.UserID);
                 break;
             default:
                 Console.WriteLine("Invalid choice.");

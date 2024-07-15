@@ -12,10 +12,11 @@ public class MenuDataService
         using (var connection = new MySqlConnection(_connectionString))
         {
             connection.Open();
-            string query = "SELECT menuID, itemName FROM Menu WHERE mealType = @mealType";
+            string query = "SELECT menuID, itemName FROM Menu WHERE mealType = @mealType and availability = @availability";
             using (var command = new MySqlCommand(query, connection))
             {
                 command.Parameters.AddWithValue("@mealType", mealType);
+                command.Parameters.AddWithValue("@availability", 1);
                 using (var reader = command.ExecuteReader())
                 {
                     while (reader.Read())

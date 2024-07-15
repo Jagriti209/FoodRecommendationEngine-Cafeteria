@@ -21,7 +21,6 @@ public class MenuService
 
             string jsonData = JsonConvert.SerializeObject(requestData);
             string response = _client.SendRequestAndGetResponse(jsonData);
-            Console.WriteLine("Request for menu items sent to server");
             DisplayMenuItem menuItems = JsonConvert.DeserializeObject<DisplayMenuItem>(response);
             return menuItems;
         }
@@ -43,7 +42,6 @@ public class MenuService
 
             string jsonData = JsonConvert.SerializeObject(requestData);
             string response = _client.SendRequestAndGetResponse(jsonData);
-            Console.WriteLine("Request for menu items sent to server");
             MenuItem[] menuItems = JsonConvert.DeserializeObject<MenuItem[]>(response);
             return menuItems;
         }

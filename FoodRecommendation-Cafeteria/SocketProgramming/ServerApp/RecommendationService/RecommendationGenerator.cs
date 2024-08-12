@@ -1,17 +1,18 @@
 ﻿using MySqlConnector;
+using System;
 using System.Collections.Generic;
 
 public class RecommendationGenerator
 {
-    private readonly MenuDataService _menuDataService;
-    private readonly FeedbackDataService _feedbackDataService;
-    private readonly SentimentAnalysisService _sentimentAnalysisService;
+    private readonly MenuDataService menuDataService;
+    private readonly FeedbackDataService feedbackDataService;
+    private readonly SentimentAnalysisService sentimentAnalysisService;
 
     public RecommendationGenerator()
     {
-        _menuDataService = new MenuDataService();
-        _feedbackDataService = new FeedbackDataService();
-        _sentimentAnalysisService = new SentimentAnalysisService();
+        menuDataService = new MenuDataService();
+        feedbackDataService = new FeedbackDataService();
+        sentimentAnalysisService = new SentimentAnalysisService();
     }
 
     public List<MenuItemScore> GenerateRecommendations()
@@ -19,24 +20,39 @@ public class RecommendationGenerator
         List<MenuItemScore> menuItemScores = new List<MenuItemScore>();
         List<string> mealTypes = new List<string> { "breakfast", "lunch", "dinner" };
 
-        foreach (string mealType in mealTypes)
+        try
         {
-            List<MenuItem> menuItems = _menuDataService.GetMenuItemsByMealType(mealType);
-
-            foreach (var menuItem in menuItems)
+            foreach (string mealType in mealTypes)
             {
-                List<FeedbackData> feedbacks = _feedbackDataService.GetFeedbacksByMenuId(menuItem.MenuID);
-                double averageScore = _sentimentAnalysisService.CalculateAverageScore(feedbacks);
+                List<MenuItem> menuItems = menuDataService.GetMenuItemsByMealType(mealType);
 
-                menuItemScores.Add(new MenuItemScore
+                foreach (var menuItem in menuItems)
                 {
-                    MenuID = menuItem.MenuID,
-                    AverageScore = averageScore,
-                    ItemName = menuItem.ItemName,
-                    MealType = menuItem.MealType
-                });
+                    try
+                    {
+                        List<FeedbackData> feedbacks = feedbackDataService.GetFeedbacksByMenuId(menuItem.MenuID);
+                        double averageScore = sentimentAnalysisService.CalculateAverageScore(feedbacks);
+
+                        menuItemScores.Add(new MenuItemScore
+                        {
+                            MenuID = menuItem.MenuID,
+                            AverageScore = averageScore,
+                            ItemName = menuItem.ItemName,
+                            MealType = menuItem.MealType
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Error processing menu item ID {menuItem.MenuID}: {ex.Message}");
+                    }
+                }
             }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error generating recommendations: {ex.Message}");
+        }
+
         return menuItemScores;
     }
 }

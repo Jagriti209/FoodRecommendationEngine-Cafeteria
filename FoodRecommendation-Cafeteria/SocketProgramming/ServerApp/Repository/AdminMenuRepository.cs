@@ -2,11 +2,11 @@
 
 public static class AdminMenuRepository
 {
-    private static string _connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
+    private static string connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
 
     public static string AddMenuItem(MenuItem menuItem)
     {
-        using (var connection = new MySqlConnection(_connectionString))
+        using (var connection = new MySqlConnection(connectionString))
         {
             try
             {
@@ -38,7 +38,7 @@ public static class AdminMenuRepository
 
     public static void UpdateMenuItem(MenuItem menuItem)
     {
-        using (var connection = new MySqlConnection(_connectionString))
+        using (var connection = new MySqlConnection(connectionString))
         {
             try
             {
@@ -64,7 +64,7 @@ public static class AdminMenuRepository
     public static string DeleteMenuItem(int MenuID)
     {
         string itemName = null;
-        using (var connection = new MySqlConnection(_connectionString))
+        using (var connection = new MySqlConnection(connectionString))
         {
             try
             {

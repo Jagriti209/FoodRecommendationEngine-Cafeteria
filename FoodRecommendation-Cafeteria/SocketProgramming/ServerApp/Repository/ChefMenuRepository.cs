@@ -2,12 +2,12 @@
 
 public static class ChefMenuRepository
 {
-    private static string _connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
+    private static string connectionString = "Server=localhost;Database=foodrecommendationenginedb;User ID=root;Password=root;";
 
     public static void CreateMenuForNextDay(MenuItem menuData)
     {
         string mealType = null;
-        using (var connection = new MySqlConnection(_connectionString))
+        using (var connection = new MySqlConnection(connectionString))
         {
             try
             {
@@ -43,7 +43,7 @@ public static class ChefMenuRepository
     public static string AddItemToDiscardedMenu(int menuId)
     {
         string itemName = null;
-        using (var connection = new MySqlConnection(_connectionString))
+        using (var connection = new MySqlConnection(connectionString))
         {
             try
             {

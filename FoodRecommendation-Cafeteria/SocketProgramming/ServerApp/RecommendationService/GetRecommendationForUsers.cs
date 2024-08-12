@@ -1,46 +1,51 @@
 ﻿using MySqlConnector;
 using Newtonsoft.Json;
-using System.IO;
 using System.Net.Sockets;
-using System.Text;
 
 public class RecommendationServiceForUser
 {
-    private readonly FeedbackDataService _feedbackDataService;
-    private readonly SentimentAnalysisService _sentimentAnalysisService;
+    private readonly FeedbackDataService feedbackDataService;
+    private readonly SentimentAnalysisService sentimentAnalysisService;
     private readonly string connectionString = Configuration.ConnectionString;
     public RecommendationServiceForUser()
     {
-        _feedbackDataService = new FeedbackDataService();
-        _sentimentAnalysisService = new SentimentAnalysisService();
+        feedbackDataService = new FeedbackDataService();
+        sentimentAnalysisService = new SentimentAnalysisService();
     }
     public void GenerateRecommendationForMe(NetworkStream stream, int userId)
     {
         List<MenuItemScore> recommendedMenu = new List<MenuItemScore>();
-        var userDetails = GetUserPreferences(userId);
-        List<string> mealTypes = new List<string> { "breakfast", "lunch", "dinner" };
-        foreach (string mealType in mealTypes)
+        try
         {
-            List<MenuItem> menuItems = GetMenuItemsByUserPreferences(mealType, userDetails);
-
-            foreach (var menuItem in menuItems)
+            var userDetails = GetUserPreferences(userId);
+            List<string> mealTypes = new List<string> { "breakfast", "lunch", "dinner" };
+            foreach (string mealType in mealTypes)
             {
-                List<FeedbackData> feedbacks = _feedbackDataService.GetFeedbacksByMenuId(menuItem.MenuID);
-                double averageScore = _sentimentAnalysisService.CalculateAverageScore(feedbacks);
+                List<MenuItem> menuItems = GetMenuItemsByUserPreferences(mealType, userDetails);
 
-
-                recommendedMenu.Add(new MenuItemScore
+                foreach (var menuItem in menuItems)
                 {
-                    MenuID = menuItem.MenuID,
-                    AverageScore = averageScore,
-                    ItemName = menuItem.ItemName,
-                    MealType = menuItem.MealType
-                });
+                    List<FeedbackData> feedbacks = feedbackDataService.GetFeedbacksByMenuId(menuItem.MenuID);
+                    double averageScore = sentimentAnalysisService.CalculateAverageScore(feedbacks);
 
+
+                    recommendedMenu.Add(new MenuItemScore
+                    {
+                        MenuID = menuItem.MenuID,
+                        AverageScore = averageScore,
+                        ItemName = menuItem.ItemName,
+                        MealType = menuItem.MealType
+                    });
+
+                }
             }
+            string responseDataJson = JsonConvert.SerializeObject(recommendedMenu);
+            ClientHandler.SendResponse(responseDataJson);
         }
-        string responseDataJson = JsonConvert.SerializeObject(recommendedMenu);
-        ClientHandler.SendResponse(responseDataJson);
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error generating recommendations: {ex.Message}");
+        }
     }
     public UserData GetUserPreferences(int userId)
     {
@@ -87,31 +92,39 @@ public class RecommendationServiceForUser
     {
         List<MenuItem> menuItems = new List<MenuItem>();
         using (var connection = new MySqlConnection(connectionString))
-        {
-            connection.Open();
-            string query = "SELECT menuID, itemName FROM Menu WHERE MealType = @MealType and foodType = @foodType and IsSpicy = @IsSpicy and cuisineType = @cuisineType and availability = @availability ";
-            using (var command = new MySqlCommand(query, connection))
+            try
             {
-                command.Parameters.AddWithValue("@MealType", mealType);
-                command.Parameters.AddWithValue("@foodType", userDetails.FoodPreference);
-                command.Parameters.AddWithValue("@IsSpicy", userDetails.SpiceTolerant);
-                command.Parameters.AddWithValue("@cuisineType", userDetails.CuisinePreference);
-                command.Parameters.AddWithValue("@availability", 1);
-                using (var reader = command.ExecuteReader())
+                connection.Open();
+                string query = "SELECT menuID, itemName FROM Menu WHERE MealType = @MealType and foodType = @foodType and IsSpicy = @IsSpicy and cuisineType = @cuisineType and availability = @availability ";
+                using (var command = new MySqlCommand(query, connection))
                 {
-                    while (reader.Read())
+                    command.Parameters.AddWithValue("@MealType", mealType);
+                    command.Parameters.AddWithValue("@foodType", userDetails.FoodPreference);
+                    command.Parameters.AddWithValue("@IsSpicy", userDetails.SpiceTolerant);
+                    command.Parameters.AddWithValue("@cuisineType", userDetails.CuisinePreference);
+                    command.Parameters.AddWithValue("@availability", 1);
+                    using (var reader = command.ExecuteReader())
                     {
-                        menuItems.Add(new MenuItem
+                        while (reader.Read())
                         {
-                            MenuID = reader.GetInt32("menuID"),
-                            ItemName = reader.GetString("itemName"),
-                            MealType = mealType
-                        });
+                            menuItems.Add(new MenuItem
+                            {
+                                MenuID = reader.GetInt32("menuID"),
+                                ItemName = reader.GetString("itemName"),
+                                MealType = mealType
+                            });
+                        }
                     }
                 }
             }
-        }
-
+            catch (MySqlException sqlEx)
+            {
+                Console.WriteLine($"MySQL error retrieving menu items: {sqlEx.Message}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"General error retrieving menu items: {ex.Message}");
+            }
         return menuItems;
     }
 }

@@ -3,18 +3,31 @@
 public static class Logout
 {
     private static string connectionString = Configuration.ConnectionString;
+
     public static void LogUserLogout(int userId)
     {
-        using (var connection = new MySqlConnection(connectionString))
+        try
         {
-            connection.Open();
-            string query = "INSERT INTO UserSessionLog (UserId, LogoutTime) VALUES (@userId, @LogoutTime)";
-            using (var command = new MySqlCommand(query, connection))
+            using (var connection = new MySqlConnection(connectionString))
             {
-                command.Parameters.AddWithValue("@userId", userId);
-                command.Parameters.AddWithValue("@LogoutTime", DateTime.Now);
-                command.ExecuteNonQuery();
+                connection.Open();
+                string query = "INSERT INTO UserSessionLog (UserId, LogoutTime) VALUES (@userId, @LogoutTime)";
+
+                using (var command = new MySqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@userId", userId);
+                    command.Parameters.AddWithValue("@LogoutTime", DateTime.Now);
+                    command.ExecuteNonQuery();
+                }
             }
+        }
+        catch (MySqlException ex)
+        {
+            Console.WriteLine($"MySQL error: {ex.Message}");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"General error: {ex.Message}");
         }
     }
 }

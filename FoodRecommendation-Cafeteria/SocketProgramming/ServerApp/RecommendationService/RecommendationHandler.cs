@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 public class RecommendationHandler
@@ -7,16 +8,31 @@ public class RecommendationHandler
     {
         List<MenuItemScore> recommendedItems = new List<MenuItemScore>();
 
-        foreach (string mealType in recommendations.Select(x => x.MealType).Distinct())
+        try
         {
-            var topItems = recommendations
-                .Where(item => item.MealType == mealType)
-                .OrderByDescending(item => item.AverageScore)
-                .Take(5)
-                .ToList();
+            foreach (string mealType in recommendations.Select(x => x.MealType).Distinct())
+            {
+                try
+                {
+                    var topItems = recommendations
+                        .Where(item => item.MealType == mealType)
+                        .OrderByDescending(item => item.AverageScore)
+                        .Take(5)
+                        .ToList();
 
-            recommendedItems.AddRange(topItems);
+                    recommendedItems.AddRange(topItems);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing top recommended items for meal type {mealType}: {ex.Message}");
+                }
+            }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving top recommended items: {ex.Message}");
+        }
+
         return recommendedItems;
     }
 
@@ -24,15 +40,30 @@ public class RecommendationHandler
     {
         List<MenuItemScore> discardItems = new List<MenuItemScore>();
 
-        foreach (string mealType in recommendations.Select(x => x.MealType).Distinct())
+        try
         {
-            var lowestItems = recommendations
-                .Where(item => item.MealType == mealType && item.AverageScore < 2.5)
-                .OrderBy(item => item.AverageScore)
-                .ToList();
+            foreach (string mealType in recommendations.Select(x => x.MealType).Distinct())
+            {
+                try
+                {
+                    var lowestItems = recommendations
+                        .Where(item => item.MealType == mealType && item.AverageScore < 2.5)
+                        .OrderBy(item => item.AverageScore)
+                        .ToList();
 
-            discardItems.AddRange(lowestItems);
+                    discardItems.AddRange(lowestItems);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error processing discard items for meal type {mealType}: {ex.Message}");
+                }
+            }
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error retrieving discard items: {ex.Message}");
+        }
+
         return discardItems;
     }
 }
